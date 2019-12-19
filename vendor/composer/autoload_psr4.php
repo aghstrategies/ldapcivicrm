@@ -10,4 +10,5 @@ return array(
     'FreeDSx\\Sasl\\' => array($vendorDir . '/freedsx/sasl/src/FreeDSx/Sasl'),
     'FreeDSx\\Ldap\\' => array($vendorDir . '/freedsx/ldap/src/FreeDSx/Ldap'),
     'FreeDSx\\Asn1\\' => array($vendorDir . '/freedsx/asn1/src/FreeDSx/Asn1'),
+    'Agh\\' => array($baseDir . '/src/Agh'),
 );
