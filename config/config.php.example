@@ -11,3 +11,9 @@ $civicrm_api_key = '';
 
 // Site key
 $civicrm_site_key = '';
+
+// Path to SSL certificate
+$ssl_cert_path = '';
+
+// Path to SSL certificate key
+$ssl_key_path = '';
