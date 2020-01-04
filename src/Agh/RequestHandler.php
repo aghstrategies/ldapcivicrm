@@ -101,10 +101,28 @@ class RequestHandler extends GenericRequestHandler {
         break;
 
       case 'givenName':
+        $filterField = 'first_name';
+        break;
+
       case 'sn':
+        $filterField = 'last_name';
+        break;
+
       case 'displayName':
       default:
-        $filterField = 'display_name';
+        // display_name and sort_name are kind of broken in CiviCRM APIv3 - see
+        // https://issues.civicrm.org/jira/browse/CRM-17042
+        // We'll do this workaround and return.
+        if ($startsWith = $filter->getStartsWith()) {
+          $params['display_name'] = $startsWith;
+        }
+        if ($endsWith = $filter->getEndsWith()) {
+          $params['display_name'] = $endsWith;
+        }
+        if ($contains = $filter->getContains()) {
+          $params['display_name'] = $contains;
+        }
+        return $params;
     }
 
     if ($startsWith = $filter->getStartsWith()) {
