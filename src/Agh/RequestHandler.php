@@ -35,14 +35,17 @@ class RequestHandler extends GenericRequestHandler {
     'displayName' => 'display_name',
   ];
 
+  protected $users = [];
+
   /**
    * @var Agh\SiteEnv
    */
   protected $site;
 
   public function bind(string $username, string $password): bool {
-    // TODO: implement authentication
-    return true;
+    if (empty($this->users)) {
+      $this->users = SiteEnv::getUsers();
+    }
     return isset($this->users[$username]) && $this->users[$username] === $password;
   }
 

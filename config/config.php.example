@@ -17,3 +17,10 @@ $ssl_cert_path = '';
 
 // Path to SSL certificate key
 $ssl_key_path = '';
+
+// Array of valid users and passwords, e.g.
+// $ldap_user_table = [
+//   'myuser' => 'password1234',
+//   'otheruser' => 'fo0o0o0o0o0o0bar',
+// ];
+$ldap_user_table = [];

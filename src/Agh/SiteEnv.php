@@ -19,6 +19,11 @@ class SiteEnv {
     $this->setUrls();
   }
 
+  public static function getUsers() {
+    require __DIR__ . '/../../config/config.php';
+    return $ldap_user_table;
+  }
+
   protected function setUrls() {
     switch ($this->cms) {
       case 'Joomla':
