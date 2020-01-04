@@ -64,7 +64,8 @@ class RequestHandler extends GenericRequestHandler {
       }
     }
 
-    if (is_a($filter, 'FreeDSx\Ldap\Search\Filter\SubstringFilter')) {
+    if (is_a($filter, 'FreeDSx\Ldap\Search\Filter\SubstringFilter')
+      || is_a($filter, 'FreeDSx\Ldap\Search\Filter\EqualityFilter')) {
       $params = self::paramsFromFilter($filter);
       $result = $this->site->api('contact', 'get', $params);
       if (empty($result['values'])) {
@@ -80,7 +81,7 @@ class RequestHandler extends GenericRequestHandler {
   /**
    * Get CiviCRM API parameters from a filter
    *
-   * @param FreeDSx\Ldap\Search\Filter\FilterInterface $filter
+   * @param FreeDSx\Ldap\Search\Filter\FilterInterface|FreeDSx\Ldap\Search\Filter\EqualityFilter $filter
    *   The filter used on this search.
    *
    * @return array
@@ -110,6 +111,11 @@ class RequestHandler extends GenericRequestHandler {
 
       case 'displayName':
       default:
+        if (is_a($filter, 'FreeDSx\Ldap\Search\Filter\EqualityFilter')) {
+          $params['display_name'] = $filter->getValue();
+          return $params;
+        }
+
         // display_name and sort_name are kind of broken in CiviCRM APIv3 - see
         // https://issues.civicrm.org/jira/browse/CRM-17042
         // We'll do this workaround and return.
@@ -125,14 +131,19 @@ class RequestHandler extends GenericRequestHandler {
         return $params;
     }
 
-    if ($startsWith = $filter->getStartsWith()) {
-      $params[$filterField] = ['LIKE' => "$startsWith%"];
+    if (is_a($filter, 'FreeDSx\Ldap\Search\Filter\EqualityFilter')) {
+      $params[$filterField] = $filter->getValue();
     }
-    if ($endsWith = $filter->getEndsWith()) {
-      $params[$filterField] = ['LIKE' => "%$endsWith"];
-    }
-    if ($contains = $filter->getContains()) {
-      $params[$filterField] = ['LIKE' => "%$contains%"];
+    else {
+      if ($startsWith = $filter->getStartsWith()) {
+        $params[$filterField] = ['LIKE' => "$startsWith%"];
+      }
+      if ($endsWith = $filter->getEndsWith()) {
+        $params[$filterField] = ['LIKE' => "%$endsWith"];
+      }
+      if ($contains = $filter->getContains()) {
+        $params[$filterField] = ['LIKE' => "%$contains%"];
+      }
     }
     return $params;
   }
