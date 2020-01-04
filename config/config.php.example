@@ -20,7 +20,7 @@ $ssl_key_path = '';
 
 // Array of valid users and passwords, e.g.
 // $ldap_user_table = [
-//   'myuser' => 'password1234',
-//   'otheruser' => 'fo0o0o0o0o0o0bar',
+//   'cn=root,dc=example,dc=org' => 'password1234',
+//   'cn=someone,dc=example,dc=org' => 'fo0o0o0o0o0o0bar',
 // ];
 $ldap_user_table = [];
