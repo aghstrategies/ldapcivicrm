@@ -45,6 +45,7 @@ class ComposerStaticInit4b9761e6b2abe31455f45787d3c61481
 
     public static $classMap = array (
         'Agh\\RequestHandler' => __DIR__ . '/../..' . '/src/Agh/RequestHandler.php',
+        'Agh\\SiteEnv' => __DIR__ . '/../..' . '/src/Agh/SiteEnv.php',
         'FreeDSx\\Asn1\\Asn1' => __DIR__ . '/..' . '/freedsx/asn1/src/FreeDSx/Asn1/Asn1.php',
         'FreeDSx\\Asn1\\Encoder\\BerEncoder' => __DIR__ . '/..' . '/freedsx/asn1/src/FreeDSx/Asn1/Encoder/BerEncoder.php',
         'FreeDSx\\Asn1\\Encoder\\CerDerTrait' => __DIR__ . '/..' . '/freedsx/asn1/src/FreeDSx/Asn1/Encoder/CerDerTrait.php',

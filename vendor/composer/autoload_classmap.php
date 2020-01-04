@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Agh\\RequestHandler' => $baseDir . '/src/Agh/RequestHandler.php',
+    'Agh\\SiteEnv' => $baseDir . '/src/Agh/SiteEnv.php',
     'FreeDSx\\Asn1\\Asn1' => $vendorDir . '/freedsx/asn1/src/FreeDSx/Asn1/Asn1.php',
     'FreeDSx\\Asn1\\Encoder\\BerEncoder' => $vendorDir . '/freedsx/asn1/src/FreeDSx/Asn1/Encoder/BerEncoder.php',
     'FreeDSx\\Asn1\\Encoder\\CerDerTrait' => $vendorDir . '/freedsx/asn1/src/FreeDSx/Asn1/Encoder/CerDerTrait.php',
