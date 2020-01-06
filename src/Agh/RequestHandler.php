@@ -80,19 +80,45 @@ class RequestHandler extends GenericRequestHandler {
         return $this->singleContact($contactId, $baseDn);
       }
     }
-
-    if (is_a($filter, 'FreeDSx\Ldap\Search\Filter\SubstringFilter')
-      || is_a($filter, 'FreeDSx\Ldap\Search\Filter\EqualityFilter')) {
-      $params = self::paramsFromFilter($filter);
-      $result = $this->site->api('contact', 'get', $params);
-      if (empty($result['values'])) {
+    else {
+      $searches = $vals = [];
+      $this->apiValsFromFilter($vals, $filter, $searches);
+      if (empty($vals)) {
         return new Entries();
       }
-      return $this->formatContacts($result['values'], $search->getBaseDn());
+      return $this->formatContacts($vals, $search->getBaseDn());
     }
+  }
 
-    // TODO: If we're here something is wrong, but we'll just return nothing.
-    return new Entries();
+  protected function apiValsFromFilter(&$vals, $filter, &$searches) {
+    switch (get_class($filter)) {
+      case 'FreeDSx\Ldap\Search\Filter\SubstringFilter':
+      case 'FreeDSx\Ldap\Search\Filter\EqualityFilter':
+        $params = self::paramsFromFilter($filter);
+        $searchJson = json_encode($params);
+        if (in_array($searchJson, $searches)) {
+          break;
+        }
+        $searches[] = $searchJson;
+        $result = $this->site->api('contact', 'get', $params);
+        if (!empty($result['values'])) {
+          // Cheat to cut out repeats
+          foreach ($result['values'] as $val) {
+            $vals[$val['id']] = $val;
+          }
+        }
+        break;
+
+      case 'FreeDSx\Ldap\Search\Filter\AndFilter':
+        // We'll cheat a bit and treat "AND" as "OR" since search isn't usually
+        // this complex.
+      case 'FreeDSx\Ldap\Search\Filter\OrFilter':
+        $filters = $filter->get();
+        foreach ($filter as $f) {
+          $this->apiValsFromFilter($vals, $f, $searches);
+        }
+        break;
+    }
   }
 
   /**
@@ -143,7 +169,8 @@ class RequestHandler extends GenericRequestHandler {
           $params['display_name'] = $endsWith;
         }
         if ($contains = $filter->getContains()) {
-          $params['display_name'] = $contains;
+          // Cheating and just pulling the first item from contains
+          $params['display_name'] = array_shift($contains);
         }
         return $params;
     }
@@ -159,7 +186,9 @@ class RequestHandler extends GenericRequestHandler {
         $params[$filterField] = ['LIKE' => "%$endsWith"];
       }
       if ($contains = $filter->getContains()) {
-        $params[$filterField] = ['LIKE' => "%$contains%"];
+        // Cheating and just pulling the first item from contains
+        $fcontains = array_shift($contains);
+        $params[$filterField] = ['LIKE' => "%$fcontains%"];
       }
     }
     return $params;
