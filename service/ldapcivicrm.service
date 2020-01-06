@@ -1,0 +1,14 @@
+[Unit]
+Description=LDAP CiviCRM service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/php /srv/ldapcivicrm/bin/ldapcivicrm.php
+
+[Install]
+WantedBy=multi-user.target
