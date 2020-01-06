@@ -1,16 +1,16 @@
 <?php
 
 // Array of site details
-$ldapSites = [
+$ldap_sites = [
   // 'mysite' => [
   //   // Base URL of the CiviCRM site, without the trailing slash
-  //   'civicrm_base_url' => '',
+  //   'baseUrl' => '',
   //   // "Drupal", "Joomla", "WordPress", or "Backdrop"
-  //   'civicrm_cms' => '',
+  //   'cms' => '',
   //   // API key for a user that can access all contacts
-  //   'civicrm_api_key' => '',
+  //   'apiKey' => '',
   //   // Site key
-  //   'civicrm_site_key' => '',
+  //   'siteKey' => '',
   // ],
 ];
 
