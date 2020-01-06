@@ -10,18 +10,27 @@ class SiteEnv {
   protected $apiKey;
   protected $siteKey;
 
-  public function __construct() {
+  public function __construct($username, $password) {
     require __DIR__ . '/../../config/config.php';
-    $this->cms = $civicrm_cms;
-    $this->baseUrl = $civicrm_base_url;
-    $this->apiKey = $civicrm_api_key;
-    $this->siteKey = $civicrm_site_key;
-    $this->setUrls();
-  }
+    if (empty($ldap_user_table[$username])) {
+      throw new Exception('No such user found', 100);
+    }
+    if (empty($ldap_user_table[$username]['password'])
+      || $ldap_user_table[$username]['password'] !== $password) {
+      throw new Exception('Invalid password', 150);
+    }
+    if (empty($ldap_user_table[$username]['site'])
+      || empty($ldap_sites[$ldap_user_table[$username]['site']])) {
+      throw new Exception('Cannot find site details', 200);
+    }
 
-  public static function getUsers() {
-    require __DIR__ . '/../../config/config.php';
-    return $ldap_user_table;
+    foreach (['cms', 'baseUrl', 'apiKey', 'siteKey'] as $detail) {
+      if (empty($ldap_sites[$ldap_user_table[$username]['site']][$detail])) {
+        throw new Exception("Cannot find $detail for site {$ldap_user_table[$username]['site']} in config", 250);
+      }
+      $this->$detail = $ldap_sites[$ldap_user_table[$username]['site']][$detail];
+    }
+    $this->setUrls();
   }
 
   protected function setUrls() {
@@ -58,8 +67,6 @@ class SiteEnv {
   }
 
   public function api($entity, $action, $params) {
-    // TODO: stop debug
-    print_r($params);
     $urlArgs = [
       'entity' => $entity,
       'action' => $action,
@@ -84,10 +91,7 @@ class SiteEnv {
       $context
     );
 
-    $result = json_decode($data, TRUE);
-    // TODO: stop debug
-    print_r($result);
-    return $result;
+    return json_decode($data, TRUE);
   }
 
 }

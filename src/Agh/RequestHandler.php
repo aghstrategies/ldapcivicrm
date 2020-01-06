@@ -43,10 +43,25 @@ class RequestHandler extends GenericRequestHandler {
   protected $site;
 
   public function bind(string $username, string $password): bool {
-    if (empty($this->users)) {
-      $this->users = SiteEnv::getUsers();
+    try {
+      $this->site = new SiteEnv($username, $password);
     }
-    return isset($this->users[$username]) && $this->users[$username] === $password;
+    catch (Exception $e) {
+      switch ($e->getCode()) {
+        case 200:
+          // Can't cross-reference site
+          // TODO: log this
+        case 250:
+          // Can't find site detail
+          // TODO: log this
+
+        case 100:
+        case 150:
+          // No such user
+          return FALSE;
+      }
+    }
+    return TRUE;
   }
 
   public function search(RequestContext $context, SearchRequest $search) : Entries {
@@ -55,7 +70,6 @@ class RequestHandler extends GenericRequestHandler {
     $params['options']['limit'] = $search->getSizeLimit();
 
     $filter = $search->getFilter();
-    $this->site = new SiteEnv();
 
     if (is_a($filter, 'FreeDSx\Ldap\Search\Filter\PresentFilter')) {
       // get contact id from `cn` after the `civi_` prefix
@@ -192,7 +206,6 @@ class RequestHandler extends GenericRequestHandler {
       'id' => $contactId,
       'option.limit' => 1,
       'return' => array_values(self::FIELD_MAP),
-      // 'return' => "first_name,last_name,email,current_employer,prefix_id,gender_id,street_address,supplemental_address_1,supplemental_address_2,city,postal_code,state_province,country,phone,job_title",
     ]);
     if (!empty($result['values'][0])) {
       return new Entries(
