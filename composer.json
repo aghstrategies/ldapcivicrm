@@ -1,4 +1,14 @@
 {
+    "name": "aghstrategies/ldapcivicrm",
+    "description": "LDAP for CiviCRM"
+    "version": "0.1.0",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Andrew Hunt",
+            "homepage": "https://aghstrategies.com"
+        }
+    ],
     "require": {
         "freedsx/ldap": "^0.6.0"
     },
